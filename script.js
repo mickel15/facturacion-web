@@ -6,7 +6,6 @@ const resultadosDiv = document.getElementById('resultados');
 const errorDiv = document.getElementById('error');
 
 async function enviarDatos() {
-  // Validar campos obligatorios
   const required = [
     { id: 'v_nombre', name: 'Nombre del vendedor' },
     { id: 'v_telefono', name: 'Teléfono del vendedor' },
@@ -19,13 +18,13 @@ async function enviarDatos() {
 
   for (let field of required) {
     const el = document.getElementById(field.id);
+
     if (!el || !el.value.trim()) {
       mostrarError(`❌ El campo "${field.name}" es obligatorio.`);
       return;
     }
   }
 
-  // Construir objeto de datos
   const data = {
     vendedor: {
       nombre: document.getElementById('v_nombre').value.trim(),
@@ -41,7 +40,7 @@ async function enviarDatos() {
     },
     documento: {
       numero: document.getElementById('numero_factura').value.trim(),
-      fecha: document.getElementById('fecha').value
+      fecha: document.getElementById('fecha') ? document.getElementById('fecha').value : ""
     },
     vehiculo: {
       marca: document.getElementById('marca').value.trim(),
@@ -60,6 +59,7 @@ async function enviarDatos() {
 
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> <i class="fas fa-hourglass-half"></i> Generando documentos...';
+
   ocultarResultados();
   ocultarError();
 
@@ -68,40 +68,92 @@ async function enviarDatos() {
       method: 'POST',
       body: JSON.stringify(data)
     });
-    const result = await response.json();
 
-    if (result.exito === true) {
-      mostrarExito(data.documento.numero, result.archivos);
+    const texto = await response.text();
+
+    console.log("RESPUESTA CRUDA DEL BACKEND:", texto);
+
+    let result;
+
+    try {
+      result = JSON.parse(texto);
+    } catch (errorJson) {
+      throw new Error("El backend no devolvió JSON válido: " + texto);
+    }
+
+    console.log("RESPUESTA JSON:", result);
+
+    if (result.exito === true && result.archivos) {
+      mostrarExito(data.documento.numero, result.archivos, result.sheetId);
+    } else if (result.exito === true && !result.archivos) {
+      mostrarError(
+        "⚠️ Apps Script respondió exito:true, pero no devolvió los enlaces de los PDFs. Revisa que el doPost esté usando el código completo y no una versión de prueba."
+      );
     } else {
       mostrarError(result.error || 'Error desconocido al generar los documentos.');
     }
+
   } catch (error) {
-    console.error('Error de red:', error);
-    mostrarError('❌ No se pudo conectar con el servidor. Verifica tu conexión o la URL de Apps Script.');
+    console.error('Error:', error);
+    mostrarError('❌ Error: ' + error.message);
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-file-pdf"></i> Generar Documentos';
   }
 }
 
-function mostrarExito(numeroFactura, archivos) {
+function mostrarExito(numeroFactura, archivos, sheetId) {
+  if (!archivos) {
+    mostrarError("❌ No se recibieron los enlaces de los archivos PDF.");
+    return;
+  }
+
   resultadosDiv.innerHTML = `
     <h3><i class="fas fa-check-circle"></i> ¡Documentos Generados Exitosamente!</h3>
+
     <p><strong>Factura N° ${numeroFactura}</strong> procesada correctamente.</p>
+
     <div style="margin-top: 15px;">
-      <a href="${archivos.CP}" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i> Carta de Porte (PDF)</a>
-      <a href="${archivos.MF}" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i> Manifiesto de Carga (PDF)</a>
-      <a href="${archivos.FAC}" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i> Factura (PDF)</a>
+      ${archivos.CP ? `
+        <a href="${archivos.CP}" target="_blank" rel="noopener">
+          <i class="fas fa-file-pdf"></i> Carta de Porte (PDF)
+        </a>
+      ` : `<p>⚠️ No se recibió el PDF CP.</p>`}
+
+      ${archivos.MF ? `
+        <a href="${archivos.MF}" target="_blank" rel="noopener">
+          <i class="fas fa-file-pdf"></i> Manifiesto de Carga (PDF)
+        </a>
+      ` : `<p>⚠️ No se recibió el PDF MF.</p>`}
+
+      ${archivos.FAC ? `
+        <a href="${archivos.FAC}" target="_blank" rel="noopener">
+          <i class="fas fa-file-pdf"></i> Factura (PDF)
+        </a>
+      ` : `<p>⚠️ No se recibió el PDF FAC.</p>`}
     </div>
-    <p style="margin-top: 15px; font-size: 13px; color: #555;"><i class="fas fa-cloud-upload-alt"></i> Los PDFs se han guardado en Google Drive.</p>
+
+    ${sheetId ? `
+      <p style="margin-top: 15px; font-size: 13px;">
+        Sheet generado: ${sheetId}
+      </p>
+    ` : ""}
+
+    <p style="margin-top: 15px; font-size: 13px; color: #555;">
+      <i class="fas fa-cloud-upload-alt"></i> Los documentos se han guardado en Google Drive.
+    </p>
   `;
+
   resultadosDiv.classList.add('show');
 }
 
 function mostrarError(mensaje) {
   errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${mensaje}`;
   errorDiv.classList.add('show');
-  setTimeout(() => errorDiv.classList.remove('show'), 6000);
+
+  setTimeout(() => {
+    errorDiv.classList.remove('show');
+  }, 9000);
 }
 
 function ocultarResultados() {
@@ -115,6 +167,12 @@ function ocultarError() {
 }
 
 btn.addEventListener('click', enviarDatos);
+
 document.querySelectorAll('input').forEach(input => {
-  input.addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarDatos(); });
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      enviarDatos();
+    }
+  });
 });
