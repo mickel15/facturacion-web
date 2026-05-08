@@ -1,6 +1,4 @@
-// ============================================================
-// URL DE APPS SCRIPT (BACKEND)
-// ============================================================
+// URL de tu Apps Script
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnaksNYRFWx0lwMwBebsiTaRLKdtjaiHubvYHN5wulJJf2zaCL-hb7ErvmXDmF-R5/exec";
 
 const btn = document.getElementById('btnGenerar');
