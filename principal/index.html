@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Facturación | Vehículos</title>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1><i class="fas fa-file-invoice-dollar"></i> Sistema de Facturación Automotriz</h1>
+    <p>Complete todos los datos para generar los documentos</p>
+  </div>
+
+  <div class="form-content">
+    <!-- VENDEDOR -->
+    <div class="section">
+      <h3><i class="fas fa-user-check"></i> Datos del Vendedor</h3>
+      <div class="row">
+        <div class="form-group">
+          <label><i class="fas fa-user"></i> Nombre Completo *</label>
+          <input type="text" id="v_nombre" placeholder="Ej: Juan Pérez" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-phone-alt"></i> Teléfono *</label>
+          <input type="tel" id="v_telefono" placeholder="61234567" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-envelope"></i> Correo Electrónico</label>
+          <input type="email" id="v_correo" placeholder="juan@ejemplo.com" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-id-card"></i> Identificación</label>
+          <input type="text" id="v_id" placeholder="8-123-456" />
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTE -->
+    <div class="section">
+      <h3><i class="fas fa-users"></i> Datos del Cliente</h3>
+      <div class="row">
+        <div class="form-group">
+          <label><i class="fas fa-user-tie"></i> Nombre Completo *</label>
+          <input type="text" id="c_nombre" placeholder="Ej: María Gómez" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-phone-alt"></i> Teléfono</label>
+          <input type="tel" id="c_telefono" placeholder="69876543" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-id-card"></i> Identificación</label>
+          <input type="text" id="c_id" placeholder="8-789-123" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-envelope"></i> Correo Electrónico</label>
+          <input type="email" id="c_correo" placeholder="maria@ejemplo.com" />
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTO -->
+    <div class="section">
+      <h3><i class="fas fa-document"></i> Datos del Documento</h3>
+      <div class="row">
+        <div class="form-group">
+          <label><i class="fas fa-barcode"></i> Número de Factura *</label>
+          <input type="text" id="numero_factura" placeholder="Ej: EB7865" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-calendar-alt"></i> Fecha (opcional)</label>
+          <input type="date" id="fecha" />
+        </div>
+      </div>
+    </div>
+
+    <!-- VEHÍCULO -->
+    <div class="section">
+      <h3><i class="fas fa-car"></i> Datos del Vehículo</h3>
+      <div class="row">
+        <div class="form-group">
+          <label><i class="fas fa-trademark"></i> Marca *</label>
+          <input type="text" id="marca" placeholder="Toyota, Honda, etc" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-code-branch"></i> Modelo *</label>
+          <input type="text" id="modelo" placeholder="Hilux, Civic, etc" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-barcode"></i> Chasis</label>
+          <input type="text" id="chasis" placeholder="Número de chasis" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-microchip"></i> Motor</label>
+          <input type="text" id="motor" placeholder="Número de motor" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-palette"></i> Color</label>
+          <input type="text" id="color" placeholder="Blanco, Negro, etc" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-calendar"></i> Año</label>
+          <input type="text" id="anio" placeholder="2022" />
+        </div>
+      </div>
+    </div>
+
+    <!-- COSTOS -->
+    <div class="section">
+      <h3><i class="fas fa-coins"></i> Costos</h3>
+      <div class="row">
+        <div class="form-group">
+          <label><i class="fas fa-dollar-sign"></i> Precio Unitario *</label>
+          <input type="number" id="precio" placeholder="0.00" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-ship"></i> Flete</label>
+          <input type="number" id="flete" placeholder="0.00" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-shield-alt"></i> Seguro</label>
+          <input type="number" id="seguro" placeholder="0.00" step="0.01" />
+        </div>
+      </div>
+    </div>
+
+    <button id="btnGenerar"><i class="fas fa-file-pdf"></i> Generar Documentos</button>
+
+    <div id="resultados" class="resultados"></div>
+    <div id="error" class="error"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
