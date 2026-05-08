@@ -1,5 +1,5 @@
 // URL de tu Apps Script
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnaksNYRFWx0lwMwBebsiTaRLKdtjaiHubvYHN5wulJJf2zaCL-hb7ErvmXDmF-R5/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRMilvmynnQ-xK-JX36kBAGz5IDIKMkdfBMdb0k4eRmMYr9ThXaKxCYGUnqa4LeLmR/exec";
 
 const btn = document.getElementById('btnGenerar');
 const resultadosDiv = document.getElementById('resultados');
