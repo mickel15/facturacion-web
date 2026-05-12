@@ -109,14 +109,18 @@ function tramiteCard(item) {
       </div>
 
       <div class="tramite-actions">
-        <button onclick="verDetalle('${item.idTramite}')">
-          <i class="fas fa-eye"></i> Ver detalle
+       <button onclick="verDetalle('${item.idTramite}')">
+        <i class="fas fa-eye"></i> Ver detalle
         </button>
 
         ${item.sheetUrl ? `<a href="${item.sheetUrl}" target="_blank"><i class="fas fa-table"></i> Sheet</a>` : ""}
         ${item.cpPdf ? `<a href="${item.cpPdf}" target="_blank"><i class="fas fa-file-pdf"></i> CP</a>` : ""}
         ${item.mfPdf ? `<a href="${item.mfPdf}" target="_blank"><i class="fas fa-file-pdf"></i> MF</a>` : ""}
         ${item.facPdf ? `<a href="${item.facPdf}" target="_blank"><i class="fas fa-file-pdf"></i> FAC</a>` : ""}
+
+        <button class="btn-delete" onclick="confirmarEliminarTramite('${item.idTramite}', '${item.numeroFactura || item.idTramite}')">
+          <i class="fas fa-trash"></i> Eliminar
+        </button>
       </div>
     </div>
   `;
@@ -478,6 +482,45 @@ async function agregarDocumentoAdicional(idTramite, numeroFactura) {
 document.getElementById("btnVolverBusqueda").addEventListener("click", () => {
   cambiarSeccion("buscar");
 });
+
+async function confirmarEliminarTramite(idTramite, numeroFactura) {
+  const confirmar = confirm(
+    `¿Seguro que deseas eliminar el trámite ${numeroFactura}?\n\n` +
+    "Se enviarán a papelera:\n" +
+    "- La hoja de cálculo generada\n" +
+    "- PDF CP\n" +
+    "- PDF MF\n" +
+    "- PDF FAC\n\n" +
+    "El historial no se borrará; quedará marcado como ELIMINADO."
+  );
+
+  if (!confirmar) return;
+
+  try {
+    const result = await apiPost({
+      action: "eliminarTramite",
+      idTramite: idTramite
+    });
+
+    if (!result.exito) {
+      throw new Error(result.error || "No se pudo eliminar el trámite.");
+    }
+
+    alert("✅ Trámite enviado a papelera correctamente.");
+
+    await cargarDashboard();
+
+    if (inputBusqueda && inputBusqueda.value.trim()) {
+      await buscarTramites();
+    }
+
+    cambiarSeccion("dashboard");
+
+  } catch (error) {
+    console.error("Error eliminando trámite:", error);
+    alert("❌ Error al eliminar: " + error.message);
+  }
+}
 
 window.addEventListener("DOMContentLoaded", () => {
   cargarDashboard();

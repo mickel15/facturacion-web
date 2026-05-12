@@ -541,3 +541,13 @@ hr {
     width: 100%;
   }
 }
+
+.btn-delete {
+  background: #c62828 !important;
+  color: white !important;
+}
+
+.btn-delete:hover {
+  background: #8e0000 !important;
+  box-shadow: 0 5px 20px rgba(198, 40, 40, 0.35) !important;
+}
