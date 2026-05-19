@@ -34,7 +34,12 @@
     <button class="nav-btn" data-section="buscar">
       <i class="fas fa-search"></i> Buscar Trámites
     </button>
+
+    <button class="nav-btn" data-section="borradores">
+      <i class="fas fa-save"></i> Borradores
+    </button>
   </aside>
+
 
   <main class="main">
 
@@ -207,6 +212,10 @@
 
           <button id="btnGenerar">
             <i class="fas fa-file-pdf"></i> Generar Documentos
+          </button>
+
+          <button id="btnGuardarBorradorFactura" class="btn-secondary" type="button">
+            <i class="fas fa-save"></i> Guardar como borrador
           </button>
 
           <div id="resultados" class="resultados"></div>
@@ -471,12 +480,35 @@
             <i class="fas fa-file-pdf"></i> Generar Manifiesto Global
           </button>
 
+          <button id="btnGuardarBorradorGlobal" class="btn-secondary" type="button">
+           <i class="fas fa-save"></i> Guardar global como borrador
+          </button>
+
           <div id="resultadoGlobal" class="resultados"></div>
           <div id="errorGlobal" class="error"></div>
 
         </div>
       </div>
     </section>
+
+   <section id="section-borradores" class="page-section">
+     <div class="panel">
+        <h2><i class="fas fa-save"></i> Borradores guardados</h2>
+        <p class="muted">
+        Aquí aparecen los formularios incompletos guardados para continuar luego.
+      </p>
+
+    <div class="draft-top-actions">
+      <button id="btnActualizarBorradores" class="btn-small">
+        <i class="fas fa-sync-alt"></i> Actualizar borradores
+      </button>
+    </div>
+
+      <div id="listaBorradores" class="draft-list">
+        <p class="muted">Cargando borradores...</p>
+         </div>
+      </div>
+  </section>   
 
     <section id="section-buscar" class="page-section">
       <div class="panel">
