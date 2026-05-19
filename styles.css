@@ -551,3 +551,33 @@ hr {
   background: #8e0000 !important;
   box-shadow: 0 5px 20px rgba(198, 40, 40, 0.35) !important;
 }
+.hidden {
+  display: none !important;
+}
+
+.manual-global-box {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f3f5ff;
+  border: 1px solid #d9defc;
+  border-radius: 12px;
+}
+
+.manual-global-box h4 {
+  margin: 15px 0;
+  color: #333;
+}
+
+.manual-content {
+  margin-top: 15px;
+}
+
+.btn-delete {
+  background: #c62828 !important;
+  color: white !important;
+}
+
+.btn-delete:hover {
+  background: #8e0000 !important;
+  box-shadow: 0 5px 20px rgba(198, 40, 40, 0.35) !important;
+}

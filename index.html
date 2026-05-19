@@ -27,6 +27,10 @@
       <i class="fas fa-plus-circle"></i> Generar Documentos
     </button>
 
+    <button class="nav-btn" data-section="global">
+      <i class="fas fa-truck-moving"></i> Global
+    </button>
+
     <button class="nav-btn" data-section="buscar">
       <i class="fas fa-search"></i> Buscar Trámites
     </button>
@@ -45,7 +49,6 @@
       </button>
     </header>
 
-    <!-- DASHBOARD -->
     <section id="section-dashboard" class="page-section active">
       <div class="cards">
         <div class="card">
@@ -89,7 +92,6 @@
       </div>
     </section>
 
-    <!-- GENERAR DOCUMENTOS -->
     <section id="section-generar" class="page-section">
       <div class="panel">
         <h2><i class="fas fa-file-pdf"></i> Generar documentos</h2>
@@ -97,7 +99,6 @@
 
         <div class="form-content">
 
-          <!-- VENDEDOR -->
           <div class="section">
             <h3><i class="fas fa-user-check"></i> Datos del Vendedor</h3>
             <div class="row">
@@ -120,7 +121,6 @@
             </div>
           </div>
 
-          <!-- CLIENTE -->
           <div class="section">
             <h3><i class="fas fa-users"></i> Datos del Cliente</h3>
             <div class="row">
@@ -143,13 +143,12 @@
             </div>
           </div>
 
-          <!-- DOCUMENTO -->
           <div class="section">
             <h3><i class="fas fa-file-invoice"></i> Datos del Documento</h3>
             <div class="row">
               <div class="form-group">
                 <label><i class="fas fa-hashtag"></i> Número de Factura *</label>
-                <input type="text" id="numero_factura" placeholder="Ej: EB7865" />
+                <input type="text" id="numero_factura" placeholder="Ej: 000111" />
               </div>
               <div class="form-group">
                 <label><i class="fas fa-calendar-alt"></i> Fecha opcional</label>
@@ -158,7 +157,6 @@
             </div>
           </div>
 
-          <!-- VEHÍCULO -->
           <div class="section">
             <h3><i class="fas fa-car"></i> Datos del Vehículo</h3>
             <div class="row">
@@ -189,7 +187,6 @@
             </div>
           </div>
 
-          <!-- COSTOS -->
           <div class="section">
             <h3><i class="fas fa-coins"></i> Costos</h3>
             <div class="row">
@@ -219,14 +216,275 @@
       </div>
     </section>
 
-    <!-- BUSCAR -->
+    <section id="section-global" class="page-section">
+      <div class="panel">
+        <h2><i class="fas fa-truck-moving"></i> Manifiesto de Carga Global</h2>
+        <p class="muted">
+          El sistema buscará cada factura en el historial. Si no existe, despliega los datos manuales del auto correspondiente.
+        </p>
+
+        <div class="form-content">
+
+          <div class="section">
+            <h3><i class="fas fa-car-side"></i> Cantidad de autos</h3>
+
+            <div class="row">
+              <div class="form-group">
+                <label><i class="fas fa-list-ol"></i> Autos en la grúa *</label>
+                <select id="global_cantidad">
+                  <option value="1">1 auto</option>
+                  <option value="2">2 autos</option>
+                  <option value="3">3 autos</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3><i class="fas fa-file-invoice"></i> Facturas de los autos</h3>
+
+            <div class="row">
+              <div class="form-group" id="grupo_global_fac1">
+                <label><i class="fas fa-hashtag"></i> Factura auto 1 *</label>
+                <input type="text" id="global_fac1" placeholder="Ej: 000111" />
+              </div>
+
+              <div class="form-group" id="grupo_global_fac2">
+                <label><i class="fas fa-hashtag"></i> Factura auto 2 *</label>
+                <input type="text" id="global_fac2" placeholder="Ej: 000222" />
+              </div>
+
+              <div class="form-group" id="grupo_global_fac3">
+                <label><i class="fas fa-hashtag"></i> Factura auto 3 *</label>
+                <input type="text" id="global_fac3" placeholder="Ej: 000333" />
+              </div>
+            </div>
+
+            <p class="muted">
+              Nombre generado: <strong id="global_nombre_preview">GLOBAL</strong>
+            </p>
+          </div>
+
+          <div class="manual-global-box" id="manual_auto1">
+            <button type="button" class="btn-small" onclick="toggleManualGlobal(1)">
+              <i class="fas fa-pen"></i> Datos manuales auto 1
+            </button>
+
+            <div class="manual-content hidden" id="manual_content_1">
+              <h4>Datos manuales auto 1</h4>
+
+              <div class="row">
+                <div class="form-group">
+                  <label>Vendedor</label>
+                  <input type="text" id="manual1_vendedor" placeholder="Nombre del vendedor" />
+                </div>
+
+                <div class="form-group">
+                  <label>Factura</label>
+                  <input type="text" id="manual1_factura" placeholder="Ej: 000111" />
+                </div>
+
+                <div class="form-group">
+                  <label>Cliente</label>
+                  <input type="text" id="manual1_cliente" placeholder="Nombre del cliente" />
+                </div>
+
+                <div class="form-group">
+                  <label>Marca</label>
+                  <input type="text" id="manual1_marca" placeholder="Toyota, Honda, etc." />
+                </div>
+
+                <div class="form-group">
+                  <label>Modelo</label>
+                  <input type="text" id="manual1_modelo" placeholder="Hilux, Civic, etc." />
+                </div>
+
+                <div class="form-group">
+                  <label>Chasis</label>
+                  <input type="text" id="manual1_chasis" placeholder="Número de chasis" />
+                </div>
+
+                <div class="form-group">
+                  <label>Motor</label>
+                  <input type="text" id="manual1_motor" placeholder="Número de motor" />
+                </div>
+
+                <div class="form-group">
+                  <label>Año</label>
+                  <input type="text" id="manual1_anio" placeholder="2022" />
+                </div>
+
+                <div class="form-group">
+                  <label>Color</label>
+                  <input type="text" id="manual1_color" placeholder="Blanco, Negro, etc." />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="manual-global-box" id="manual_auto2">
+            <button type="button" class="btn-small" onclick="toggleManualGlobal(2)">
+              <i class="fas fa-pen"></i> Datos manuales auto 2
+            </button>
+
+            <div class="manual-content hidden" id="manual_content_2">
+              <h4>Datos manuales auto 2</h4>
+
+              <div class="row">
+                <div class="form-group">
+                  <label>Vendedor</label>
+                  <input type="text" id="manual2_vendedor" placeholder="Nombre del vendedor" />
+                </div>
+
+                <div class="form-group">
+                  <label>Factura</label>
+                  <input type="text" id="manual2_factura" placeholder="Ej: 000222" />
+                </div>
+
+                <div class="form-group">
+                  <label>Cliente</label>
+                  <input type="text" id="manual2_cliente" placeholder="Nombre del cliente" />
+                </div>
+
+                <div class="form-group">
+                  <label>Marca</label>
+                  <input type="text" id="manual2_marca" placeholder="Toyota, Honda, etc." />
+                </div>
+
+                <div class="form-group">
+                  <label>Modelo</label>
+                  <input type="text" id="manual2_modelo" placeholder="Hilux, Civic, etc." />
+                </div>
+
+                <div class="form-group">
+                  <label>Chasis</label>
+                  <input type="text" id="manual2_chasis" placeholder="Número de chasis" />
+                </div>
+
+                <div class="form-group">
+                  <label>Motor</label>
+                  <input type="text" id="manual2_motor" placeholder="Número de motor" />
+                </div>
+
+                <div class="form-group">
+                  <label>Año</label>
+                  <input type="text" id="manual2_anio" placeholder="2022" />
+                </div>
+
+                <div class="form-group">
+                  <label>Color</label>
+                  <input type="text" id="manual2_color" placeholder="Blanco, Negro, etc." />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="manual-global-box" id="manual_auto3">
+            <button type="button" class="btn-small" onclick="toggleManualGlobal(3)">
+              <i class="fas fa-pen"></i> Datos manuales auto 3
+            </button>
+
+            <div class="manual-content hidden" id="manual_content_3">
+              <h4>Datos manuales auto 3</h4>
+
+              <div class="row">
+                <div class="form-group">
+                  <label>Vendedor</label>
+                  <input type="text" id="manual3_vendedor" placeholder="Nombre del vendedor" />
+                </div>
+
+                <div class="form-group">
+                  <label>Factura</label>
+                  <input type="text" id="manual3_factura" placeholder="Ej: 000333" />
+                </div>
+
+                <div class="form-group">
+                  <label>Cliente</label>
+                  <input type="text" id="manual3_cliente" placeholder="Nombre del cliente" />
+                </div>
+
+                <div class="form-group">
+                  <label>Marca</label>
+                  <input type="text" id="manual3_marca" placeholder="Toyota, Honda, etc." />
+                </div>
+
+                <div class="form-group">
+                  <label>Modelo</label>
+                  <input type="text" id="manual3_modelo" placeholder="Hilux, Civic, etc." />
+                </div>
+
+                <div class="form-group">
+                  <label>Chasis</label>
+                  <input type="text" id="manual3_chasis" placeholder="Número de chasis" />
+                </div>
+
+                <div class="form-group">
+                  <label>Motor</label>
+                  <input type="text" id="manual3_motor" placeholder="Número de motor" />
+                </div>
+
+                <div class="form-group">
+                  <label>Año</label>
+                  <input type="text" id="manual3_anio" placeholder="2022" />
+                </div>
+
+                <div class="form-group">
+                  <label>Color</label>
+                  <input type="text" id="manual3_color" placeholder="Blanco, Negro, etc." />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3><i class="fas fa-id-badge"></i> Datos del Conductor</h3>
+
+            <div class="row">
+              <div class="form-group">
+                <label><i class="fas fa-user"></i> Nombre del conductor *</label>
+                <input type="text" id="global_conductor_nombre" placeholder="Ej: Carlos Rodríguez" />
+              </div>
+
+              <div class="form-group">
+                <label><i class="fas fa-passport"></i> Pasaporte *</label>
+                <input type="text" id="global_conductor_pasaporte" placeholder="Ej: PA123456" />
+              </div>
+
+              <div class="form-group">
+                <label><i class="fas fa-id-card"></i> Licencia *</label>
+                <input type="text" id="global_conductor_licencia" placeholder="Ej: LIC98765" />
+              </div>
+
+              <div class="form-group">
+                <label><i class="fas fa-truck"></i> Placa del cabezal *</label>
+                <input type="text" id="global_placa_cabezal" placeholder="Ej: AB1234" />
+              </div>
+
+              <div class="form-group">
+                <label><i class="fas fa-barcode"></i> Código de transporte *</label>
+                <input type="text" id="global_codigo_transporte" placeholder="Ej: TRANS001" />
+              </div>
+            </div>
+          </div>
+
+          <button id="btnGenerarGlobal">
+            <i class="fas fa-file-pdf"></i> Generar Manifiesto Global
+          </button>
+
+          <div id="resultadoGlobal" class="resultados"></div>
+          <div id="errorGlobal" class="error"></div>
+
+        </div>
+      </div>
+    </section>
+
     <section id="section-buscar" class="page-section">
       <div class="panel">
         <h2><i class="fas fa-search"></i> Buscar trámites</h2>
         <p class="muted">Busque por factura, cliente, vendedor, marca, modelo o chasis.</p>
 
         <div class="search-box">
-          <input type="text" id="inputBusqueda" placeholder="Ej: EB7865, María, Toyota, Hilux..." />
+          <input type="text" id="inputBusqueda" placeholder="Ej: 000111, María, Toyota, Hilux..." />
           <button id="btnBuscar" class="btn-search">
             <i class="fas fa-search"></i> Buscar
           </button>
@@ -236,7 +494,6 @@
       </div>
     </section>
 
-    <!-- DETALLE -->
     <section id="section-detalle" class="page-section">
       <div class="panel">
         <button id="btnVolverBusqueda" class="btn-small">

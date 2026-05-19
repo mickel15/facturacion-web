@@ -1,5 +1,8 @@
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyz-6gON9iQrUoDI_HVMKwQ6McQ--49lNMYeIIpTFdnTkmnmRiL04-7HrZc8vvpiEEG/exec";
 
+// ===============================
+// ELEMENTOS GENERALES
+// ===============================
 const btn = document.getElementById("btnGenerar");
 const resultadosDiv = document.getElementById("resultados");
 const errorDiv = document.getElementById("error");
@@ -15,6 +18,27 @@ const btnBuscar = document.getElementById("btnBuscar");
 const resultadosBusqueda = document.getElementById("resultadosBusqueda");
 const detalleTramite = document.getElementById("detalleTramite");
 
+// ===============================
+// ELEMENTOS GLOBAL
+// ===============================
+const globalCantidad = document.getElementById("global_cantidad");
+const globalFac1 = document.getElementById("global_fac1");
+const globalFac2 = document.getElementById("global_fac2");
+const globalFac3 = document.getElementById("global_fac3");
+
+const grupoGlobalFac1 = document.getElementById("grupo_global_fac1");
+const grupoGlobalFac2 = document.getElementById("grupo_global_fac2");
+const grupoGlobalFac3 = document.getElementById("grupo_global_fac3");
+
+const globalNombrePreview = document.getElementById("global_nombre_preview");
+
+const btnGenerarGlobal = document.getElementById("btnGenerarGlobal");
+const resultadoGlobal = document.getElementById("resultadoGlobal");
+const errorGlobal = document.getElementById("errorGlobal");
+
+// ===============================
+// API
+// ===============================
 async function apiPost(payload) {
   const response = await fetch(APPS_SCRIPT_URL, {
     method: "POST",
@@ -31,6 +55,9 @@ async function apiPost(payload) {
   }
 }
 
+// ===============================
+// NAVEGACIÓN
+// ===============================
 function cambiarSeccion(nombre) {
   document.querySelectorAll(".page-section").forEach(section => {
     section.classList.remove("active");
@@ -49,6 +76,10 @@ function cambiarSeccion(nombre) {
   if (nombre === "dashboard") {
     cargarDashboard();
   }
+
+  if (nombre === "global") {
+    actualizarCamposGlobal();
+  }
 }
 
 document.querySelectorAll(".nav-btn").forEach(btnNav => {
@@ -57,6 +88,9 @@ document.querySelectorAll(".nav-btn").forEach(btnNav => {
   });
 });
 
+// ===============================
+// DASHBOARD
+// ===============================
 document.getElementById("btnActualizarDashboard").addEventListener("click", cargarDashboard);
 
 async function cargarDashboard() {
@@ -109,8 +143,8 @@ function tramiteCard(item) {
       </div>
 
       <div class="tramite-actions">
-       <button onclick="verDetalle('${item.idTramite}')">
-        <i class="fas fa-eye"></i> Ver detalle
+        <button onclick="verDetalle('${item.idTramite}')">
+          <i class="fas fa-eye"></i> Ver detalle
         </button>
 
         ${item.sheetUrl ? `<a href="${item.sheetUrl}" target="_blank"><i class="fas fa-table"></i> Sheet</a>` : ""}
@@ -132,6 +166,9 @@ function badgeClass(estado) {
   return "warning";
 }
 
+// ===============================
+// GENERAR FAC / CP / MF
+// ===============================
 async function enviarDatos() {
   const required = [
     { id: "v_nombre", name: "Nombre del vendedor" },
@@ -268,6 +305,205 @@ document.querySelectorAll("#section-generar input").forEach(input => {
   });
 });
 
+// ===============================
+// GLOBAL
+// ===============================
+function actualizarCamposGlobal() {
+  const cantidad = Number(globalCantidad.value);
+
+  // Mostrar campos de factura según cantidad
+  grupoGlobalFac1.style.display = "block";
+  grupoGlobalFac2.style.display = cantidad >= 2 ? "block" : "none";
+  grupoGlobalFac3.style.display = cantidad >= 3 ? "block" : "none";
+
+  // Mostrar botones de datos manuales según cantidad
+  document.getElementById("manual_auto1").style.display = "block";
+  document.getElementById("manual_auto2").style.display = cantidad >= 2 ? "block" : "none";
+  document.getElementById("manual_auto3").style.display = cantidad >= 3 ? "block" : "none";
+
+  // Ocultar formularios manuales que no correspondan
+  if (cantidad < 2) {
+    document.getElementById("manual_content_2").classList.add("hidden");
+    limpiarAutoManual(2);
+  }
+
+  if (cantidad < 3) {
+    document.getElementById("manual_content_3").classList.add("hidden");
+    limpiarAutoManual(3);
+  }
+
+  actualizarPreviewGlobal();
+}
+
+function actualizarPreviewGlobal() {
+  const cantidad = Number(globalCantidad.value);
+
+  const f1 = globalFac1.value.trim();
+  const f2 = globalFac2.value.trim();
+  const f3 = globalFac3.value.trim();
+
+  const facturas = [];
+
+  if (cantidad >= 1 && f1) facturas.push(f1);
+  if (cantidad >= 2 && f2) facturas.push(f2);
+  if (cantidad >= 3 && f3) facturas.push(f3);
+
+  globalNombrePreview.textContent = facturas.length
+    ? "GLOBAL " + facturas.join("")
+    : "GLOBAL";
+}
+
+function mostrarErrorGlobal(mensaje) {
+  errorGlobal.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${mensaje}`;
+  errorGlobal.classList.add("show");
+
+  setTimeout(() => {
+    errorGlobal.classList.remove("show");
+  }, 9000);
+}
+
+function ocultarErrorGlobal() {
+  errorGlobal.classList.remove("show");
+  errorGlobal.innerHTML = "";
+}
+
+function ocultarResultadoGlobal() {
+  resultadoGlobal.classList.remove("show");
+  resultadoGlobal.innerHTML = "";
+}
+
+async function generarManifiestoGlobal() {
+  ocultarErrorGlobal();
+  ocultarResultadoGlobal();
+
+  const cantidad = Number(globalCantidad.value);
+
+  const facturas = [];
+
+  if (cantidad >= 1) facturas.push(globalFac1.value.trim());
+  if (cantidad >= 2) facturas.push(globalFac2.value.trim());
+  if (cantidad >= 3) facturas.push(globalFac3.value.trim());
+
+  for (let i = 0; i < facturas.length; i++) {
+    if (!facturas[i]) {
+      mostrarErrorGlobal(`❌ Debe ingresar la factura del auto ${i + 1}.`);
+      return;
+    }
+  }
+
+  const facturasUnicas = new Set(facturas);
+
+  if (facturasUnicas.size !== facturas.length) {
+    mostrarErrorGlobal("❌ No puede repetir números de factura en el manifiesto global.");
+    return;
+  }
+
+  const conductor = {
+    nombre: document.getElementById("global_conductor_nombre").value.trim(),
+    pasaporte: document.getElementById("global_conductor_pasaporte").value.trim(),
+    licencia: document.getElementById("global_conductor_licencia").value.trim(),
+    placaCabezal: document.getElementById("global_placa_cabezal").value.trim(),
+    codigoTransporte: document.getElementById("global_codigo_transporte").value.trim()
+  };
+
+  if (!conductor.nombre) {
+    mostrarErrorGlobal("❌ El nombre del conductor es obligatorio.");
+    return;
+  }
+
+  if (!conductor.pasaporte) {
+    mostrarErrorGlobal("❌ El pasaporte del conductor es obligatorio.");
+    return;
+  }
+
+  if (!conductor.licencia) {
+    mostrarErrorGlobal("❌ La licencia del conductor es obligatoria.");
+    return;
+  }
+
+  if (!conductor.placaCabezal) {
+    mostrarErrorGlobal("❌ La placa del cabezal es obligatoria.");
+    return;
+  }
+
+  if (!conductor.codigoTransporte) {
+    mostrarErrorGlobal("❌ El código de transporte es obligatorio.");
+    return;
+  }
+
+  btnGenerarGlobal.disabled = true;
+  btnGenerarGlobal.innerHTML = '<span class="spinner"></span> <i class="fas fa-hourglass-half"></i> Generando manifiesto global...';
+
+  const autosManuales = [
+    obtenerAutoManual(1),
+    obtenerAutoManual(2),
+    obtenerAutoManual(3)
+      ].slice(0, cantidad);
+
+  try {
+    const result = await apiPost({
+      action: "generarGlobal",
+      data: {
+        facturas: facturas,
+        conductor: conductor,
+        autosManuales: autosManuales
+      }
+    });
+
+    if (!result.exito) {
+      throw new Error(result.error || "No se pudo generar el manifiesto global.");
+    }
+
+    resultadoGlobal.innerHTML = `
+      <h3><i class="fas fa-check-circle"></i> Manifiesto Global Generado</h3>
+      <p><strong>Documento:</strong> ${result.nombre}</p>
+      <p><strong>Tipo:</strong> ${result.tipo}</p>
+
+      <div class="link-group">
+        ${result.sheetUrl ? `<a href="${result.sheetUrl}" target="_blank"><i class="fas fa-table"></i> Hoja Global</a>` : ""}
+        ${result.pdf ? `<a href="${result.pdf}" target="_blank"><i class="fas fa-file-pdf"></i> PDF Global</a>` : ""}
+      </div>
+
+      <p class="muted">El manifiesto global fue guardado en Google Drive.</p>
+    `;
+
+    resultadoGlobal.classList.add("show");
+
+    limpiarFormularioGlobal();
+
+  } catch (error) {
+    console.error("Error global:", error);
+    mostrarErrorGlobal("❌ Error: " + error.message);
+  } finally {
+    btnGenerarGlobal.disabled = false;
+    btnGenerarGlobal.innerHTML = '<i class="fas fa-file-pdf"></i> Generar Manifiesto Global';
+  }
+}
+
+function limpiarFormularioGlobal() {
+  globalFac1.value = "";
+  globalFac2.value = "";
+  globalFac3.value = "";
+
+  document.getElementById("global_conductor_nombre").value = "";
+  document.getElementById("global_conductor_pasaporte").value = "";
+  document.getElementById("global_conductor_licencia").value = "";
+  document.getElementById("global_placa_cabezal").value = "";
+  document.getElementById("global_codigo_transporte").value = "";
+
+  actualizarPreviewGlobal();
+}
+
+globalCantidad.addEventListener("change", actualizarCamposGlobal);
+globalFac1.addEventListener("input", actualizarPreviewGlobal);
+globalFac2.addEventListener("input", actualizarPreviewGlobal);
+globalFac3.addEventListener("input", actualizarPreviewGlobal);
+
+btnGenerarGlobal.addEventListener("click", generarManifiestoGlobal);
+
+// ===============================
+// BUSCADOR
+// ===============================
 btnBuscar.addEventListener("click", buscarTramites);
 
 inputBusqueda.addEventListener("keypress", e => {
@@ -304,6 +540,9 @@ async function buscarTramites() {
   }
 }
 
+// ===============================
+// DETALLE
+// ===============================
 async function verDetalle(idTramite) {
   cambiarSeccion("detalle");
 
@@ -483,6 +722,9 @@ document.getElementById("btnVolverBusqueda").addEventListener("click", () => {
   cambiarSeccion("buscar");
 });
 
+// ===============================
+// ELIMINAR TRÁMITE
+// ===============================
 async function confirmarEliminarTramite(idTramite, numeroFactura) {
   const confirmar = confirm(
     `¿Seguro que deseas eliminar el trámite ${numeroFactura}?\n\n` +
@@ -522,6 +764,68 @@ async function confirmarEliminarTramite(idTramite, numeroFactura) {
   }
 }
 
+// ===============================
+// INICIO
+// ===============================
 window.addEventListener("DOMContentLoaded", () => {
   cargarDashboard();
+  actualizarCamposGlobal();
 });
+
+function toggleManualGlobal(numeroAuto) {
+  const content = document.getElementById("manual_content_" + numeroAuto);
+
+  if (!content) return;
+
+  content.classList.toggle("hidden");
+
+  sincronizarFacturaManual(numeroAuto);
+}
+
+function sincronizarFacturaManual(numeroAuto) {
+  const facturaGlobal = document.getElementById("global_fac" + numeroAuto);
+  const facturaManual = document.getElementById("manual" + numeroAuto + "_factura");
+
+  if (facturaGlobal && facturaManual && !facturaManual.value.trim()) {
+    facturaManual.value = facturaGlobal.value.trim();
+  }
+}
+
+function obtenerAutoManual(numeroAuto) {
+  const content = document.getElementById("manual_content_" + numeroAuto);
+
+  if (!content || content.classList.contains("hidden")) {
+    return null;
+  }
+
+  return {
+    vendedor: document.getElementById(`manual${numeroAuto}_vendedor`).value.trim(),
+    numeroFactura: document.getElementById(`manual${numeroAuto}_factura`).value.trim(),
+    cliente: document.getElementById(`manual${numeroAuto}_cliente`).value.trim(),
+    marca: document.getElementById(`manual${numeroAuto}_marca`).value.trim(),
+    modelo: document.getElementById(`manual${numeroAuto}_modelo`).value.trim(),
+    chasis: document.getElementById(`manual${numeroAuto}_chasis`).value.trim(),
+    motor: document.getElementById(`manual${numeroAuto}_motor`).value.trim(),
+    anio: document.getElementById(`manual${numeroAuto}_anio`).value.trim(),
+    color: document.getElementById(`manual${numeroAuto}_color`).value.trim()
+  };
+}
+
+function limpiarAutoManual(numeroAuto) {
+  const campos = [
+    "vendedor",
+    "factura",
+    "cliente",
+    "marca",
+    "modelo",
+    "chasis",
+    "motor",
+    "anio",
+    "color"
+  ];
+
+  campos.forEach(campo => {
+    const input = document.getElementById(`manual${numeroAuto}_${campo}`);
+    if (input) input.value = "";
+  });
+}
