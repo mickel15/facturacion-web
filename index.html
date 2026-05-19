@@ -10,6 +10,15 @@
 </head>
 <body>
 
+<!-- Loader Global Personalizado -->
+<div id="globalLoader" class="global-loader">
+  <div class="loader-spinner"></div>
+  <p>Procesando...</p>
+</div>
+
+<!-- Contenedor de notificaciones Toast -->
+<div id="toastContainer" class="toast-container"></div>
+
 <div class="app">
 
   <aside class="sidebar">
@@ -39,7 +48,6 @@
       <i class="fas fa-save"></i> Borradores
     </button>
   </aside>
-
 
   <main class="main">
 
@@ -92,7 +100,7 @@
       <div class="panel">
         <h2><i class="fas fa-history"></i> Últimos trámites</h2>
         <div id="ultimosTramites" class="tramites-list">
-          <p class="muted">Cargando información...</p>
+          <!-- Skeleton loader se insertará vía JS -->
         </div>
       </div>
     </section>

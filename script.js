@@ -109,6 +109,7 @@ document.getElementById("btnActualizarDashboard").addEventListener("click", carg
 
 async function cargarDashboard() {
   ultimosTramites.innerHTML = `<p class="muted">Cargando dashboard...</p>`;
+  ultimosTramites.innerHTML = renderSkeletonDashboard();
 
   try {
     const result = await apiPost({
@@ -210,6 +211,7 @@ async function enviarDatos() {
 
   ocultarResultados();
   ocultarError();
+  mostrarLoader();
 
   try {
     const result = await apiPost({
@@ -239,6 +241,7 @@ async function enviarDatos() {
     console.error("Error:", error);
     mostrarError("❌ Error: " + error.message);
   } finally {
+    ocultarLoader();
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-file-pdf"></i> Generar Documentos';
   }
@@ -526,7 +529,7 @@ async function buscarTramites() {
   const query = inputBusqueda.value.trim();
 
   resultadosBusqueda.innerHTML = `<p class="muted">Buscando...</p>`;
-
+  resultadosBusqueda.innerHTML = renderSkeletonDashboard();
   try {
     const result = await apiPost({
       action: "buscarTramites",
@@ -683,12 +686,12 @@ async function actualizarDocumento(idTramite, documento) {
       throw new Error(result.error || "No se pudo actualizar.");
     }
 
-    alert("Documento actualizado. Estado general: " + result.estadoGeneral);
+    mostrarToast("Documento actualizado. Estado general: " + result.estadoGeneral);
     verDetalle(idTramite);
     cargarDashboard();
 
   } catch (error) {
-    alert("Error: " + error.message);
+    mostrarToast("Error: " + error.message);
   }
 }
 
@@ -697,7 +700,7 @@ async function agregarDocumentoAdicional(idTramite, numeroFactura) {
   const observacion = document.getElementById("nuevoDocumentoObs").value.trim();
 
   if (!nombre) {
-    alert("Debe escribir el nombre del documento.");
+    mostrarToast("Debe escribir el nombre del documento.");
     return;
   }
 
@@ -718,12 +721,12 @@ async function agregarDocumentoAdicional(idTramite, numeroFactura) {
       throw new Error(result.error || "No se pudo agregar.");
     }
 
-    alert("Documento adicional agregado.");
+    mostrarToast("Documento adicional agregado.");
     verDetalle(idTramite);
     cargarDashboard();
 
   } catch (error) {
-    alert("Error: " + error.message);
+    mostrarToast("Error: " + error.message);
   }
 }
 
@@ -757,7 +760,7 @@ async function confirmarEliminarTramite(idTramite, numeroFactura) {
       throw new Error(result.error || "No se pudo eliminar el trámite.");
     }
 
-    alert("✅ Trámite enviado a papelera correctamente.");
+    mostrarToast("✅ Trámite enviado a papelera correctamente.");
 
     await cargarDashboard();
 
@@ -769,7 +772,7 @@ async function confirmarEliminarTramite(idTramite, numeroFactura) {
 
   } catch (error) {
     console.error("Error eliminando trámite:", error);
-    alert("❌ Error al eliminar: " + error.message);
+    mostrarToast("❌ Error al eliminar: " + error.message);
   }
 }
 
@@ -932,10 +935,10 @@ async function guardarBorradorFactura() {
 
     borradorActivoId = result.idBorrador;
 
-    alert("✅ Borrador de factura guardado correctamente.");
+    mostrarToast("✅ Borrador de factura guardado correctamente.");
 
   } catch (error) {
-    alert("❌ Error al guardar borrador: " + error.message);
+    mostrarToast("❌ Error al guardar borrador: " + error.message);
   }
 }
 
@@ -961,10 +964,10 @@ async function guardarBorradorGlobal() {
 
     borradorActivoId = result.idBorrador;
 
-    alert("✅ Borrador global guardado correctamente.");
+    mostrarToast("✅ Borrador global guardado correctamente.");
 
   } catch (error) {
-    alert("❌ Error al guardar borrador global: " + error.message);
+    mostrarToast("❌ Error al guardar borrador global: " + error.message);
   }
 }
 
@@ -975,6 +978,7 @@ async function cargarBorradores() {
   if (!listaBorradores) return;
 
   listaBorradores.innerHTML = `<p class="muted">Cargando borradores...</p>`;
+  listaBorradores.innerHTML = renderSkeletonBorradores();
 
   try {
     const result = await apiPost({
@@ -1033,17 +1037,17 @@ async function abrirBorrador(idBorrador) {
     if (borrador.tipo === "FACTURA") {
       cargarBorradorFactura(borrador.datos);
       cambiarSeccion("generar");
-      alert("✅ Borrador de factura cargado.");
+      mostrarToast("✅ Borrador de factura cargado.");
     } else if (borrador.tipo === "GLOBAL") {
       cargarBorradorGlobal(borrador.datos);
       cambiarSeccion("global");
-      alert("✅ Borrador global cargado.");
+      mostrarToast("✅ Borrador global cargado.");
     } else {
-      alert("Tipo de borrador no reconocido.");
+      mostrarToast("Tipo de borrador no reconocido.");
     }
 
   } catch (error) {
-    alert("❌ Error al abrir borrador: " + error.message);
+    mostrarToast("❌ Error al abrir borrador: " + error.message);
   }
 }
 
@@ -1062,11 +1066,11 @@ async function confirmarEliminarBorrador(idBorrador) {
       throw new Error(result.error || "No se pudo eliminar el borrador.");
     }
 
-    alert("✅ Borrador eliminado.");
+    mostrarToast("✅ Borrador eliminado.");
     cargarBorradores();
 
   } catch (error) {
-    alert("❌ Error al eliminar borrador: " + error.message);
+    mostrarToast("❌ Error al eliminar borrador: " + error.message);
   }
 }
 
@@ -1169,3 +1173,64 @@ window.addEventListener("DOMContentLoaded", () => {
   cargarDashboard();
   actualizarCamposGlobal();
 });
+
+// ===============================
+// LOADER GLOBAL
+// ===============================
+function mostrarLoader() {
+  document.getElementById('globalLoader').classList.add('show');
+}
+
+function ocultarLoader() {
+  document.getElementById('globalLoader').classList.remove('show');
+}
+
+// ===============================
+// TOASTS
+// ===============================
+function mostrarToast(mensaje, tipo = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${tipo}`;
+
+  const iconos = {
+    success: 'fa-check-circle',
+    error: 'fa-exclamation-circle',
+    warning: 'fa-exclamation-triangle'
+  };
+
+  toast.innerHTML = `<i class="fas ${iconos[tipo] || iconos.success}"></i> ${mensaje}`;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('removing');
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+
+// ===============================
+// SKELETON LOADERS
+// ===============================
+function renderSkeletonDashboard() {
+  return Array(4).fill(0).map(() => `
+    <div class="skeleton-card">
+      <div class="skeleton skeleton-avatar"></div>
+      <div class="skeleton-lines">
+        <div class="skeleton skeleton-line medium"></div>
+        <div class="skeleton skeleton-line short"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSkeletonBorradores() {
+  return Array(3).fill(0).map(() => `
+    <div class="skeleton-card">
+      <div class="skeleton-lines" style="flex:1">
+        <div class="skeleton skeleton-line long"></div>
+        <div class="skeleton skeleton-line medium"></div>
+        <div class="skeleton skeleton-line short"></div>
+      </div>
+    </div>
+  `).join('');
+}
